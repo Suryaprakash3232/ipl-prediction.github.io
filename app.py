@@ -24,6 +24,7 @@ import pandas as pd
 
 # Load players and build PLAYER_ARCHETYPES (grouped by role with AI-predicted XI)
 PLAYER_ARCHETYPES = {}
+PLAYER_LOAD_ERROR = None
 try:
     if os.path.exists(PLAYERS_CSV):
         players_df = pd.read_csv(PLAYERS_CSV)
@@ -86,7 +87,10 @@ try:
                 PLAYER_ARCHETYPES[team]['bowlers'].append(player_data)
             else:
                 PLAYER_ARCHETYPES[team]['allrounders'].append(player_data)
+    else:
+        PLAYER_LOAD_ERROR = f"PLAYERS_CSV file does not exist at expected path: {PLAYERS_CSV}"
 except Exception as e:
+    PLAYER_LOAD_ERROR = f"Exception during startup players loading: {traceback.format_exc()}"
     print(f"Warning: Could not load players data: {e}")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -127,6 +131,8 @@ def index():
 @app.route("/get-squad/<team>")
 def get_squad(team):
     """Return the roster for a specific team, grouped by role."""
+    if PLAYER_LOAD_ERROR:
+        return jsonify({"error": "Startup Load Error", "details": PLAYER_LOAD_ERROR}), 500
     squad = PLAYER_ARCHETYPES.get(team, {'batsmen': [], 'bowlers': [], 'allrounders': []})
     return jsonify({"players": squad})
 
