@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Match Predictor — AI-Powered Cricket Analytics</title>
+    <meta name="description" content="Predict IPL match outcomes with ML-powered win probabilities, head-to-head stats, and player performance insights.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css?v=2">
+</head>
+<body>
+
+<!-- ─── Background particles ─── -->
+<div class="bg-particles" id="bgParticles"></div>
+
+<!-- ─── Header ─── -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="IPL Logo" class="logo-img">
+            <span class="logo-text">IPL <span class="accent">Predictor</span></span>
+        </div>
+        <p class="tagline">AI-Powered Match Outcome Predictions</p>
+        <div class="header-actions">
+            <button class="btn-share" id="shareBtn" title="Copy Public Link">
+                <span class="share-icon">🔗</span>
+                <span class="share-text">Share Project</span>
+            </button>
+        </div>
+    </div>
+    <nav class="site-nav">
+        <a href="/" class="nav-link active">🔮 Predictor</a>
+        <a href="/scorecard" class="nav-link">📋 Scorecards</a>
+        <a href="/points-table" class="nav-link">🏆 Points Table</a>
+    </nav>
+</header>
+
+<!-- ─── Main Content ─── -->
+<main class="container">
+
+    <!-- Prediction Form Card -->
+    <section class="card form-card" id="predictionForm">
+        <h1 class="card-title">
+            <span class="card-title-icon">⚡</span>
+            Match Setup
+        </h1>
+        <p class="card-subtitle">Configure the match details below to get AI-powered predictions</p>
+
+        <form id="matchForm" autocomplete="off">
+            <div class="form-grid">
+                <!-- Team 1 -->
+                <div class="form-group" id="team1Group">
+                    <label for="team1">Team 1</label>
+                    <div class="select-wrapper">
+                        <select id="team1" name="team1" required>
+                            <option value="" disabled selected>Select Team 1</option>
+                            {% for team in teams %}
+                            <option value="{{ team }}">{{ team }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <!-- VS Badge -->
+                <div class="vs-badge">
+                    <span>VS</span>
+                </div>
+
+                <!-- Team 2 -->
+                <div class="form-group" id="team2Group">
+                    <label for="team2">Team 2</label>
+                    <div class="select-wrapper">
+                        <select id="team2" name="team2" required>
+                            <option value="" disabled selected>Select Team 2</option>
+                            {% for team in teams %}
+                            <option value="{{ team }}">{{ team }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="select-arrow">▾</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Venue -->
+            <div class="form-group" id="venueGroup">
+                <label for="venue">
+                    <span class="label-icon">🏟️</span>
+                    Venue
+                </label>
+                <div class="select-wrapper">
+                    <select id="venue" name="venue" required>
+                        <option value="" disabled selected>Select Venue</option>
+                        {% for v in venues %}
+                        <option value="{{ v }}">{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+
+            <!-- Toss Row -->
+            <div class="form-row">
+                <div class="form-group" id="tossWinnerGroup">
+                    <label for="tossWinner">
+                        <span class="label-icon">🪙</span>
+                        Toss Winner
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="tossWinner" name="toss_winner" required>
+                            <option value="" disabled selected>Select teams first</option>
+                        </select>
+                        <span class="select-arrow">▾</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="tossDecisionGroup">
+                    <label>
+                        <span class="label-icon">🎯</span>
+                        Toss Decision
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-card" for="tossBat">
+                            <input type="radio" id="tossBat" name="toss_decision" value="bat" required>
+                            <span class="radio-visual">
+                                <span class="radio-emoji">🏏</span>
+                                <span class="radio-label">Bat First</span>
+                            </span>
+                        </label>
+                        <label class="radio-card" for="tossField">
+                            <input type="radio" id="tossField" name="toss_decision" value="field">
+                            <span class="radio-visual">
+                                <span class="radio-emoji">🥎</span>
+                                <span class="radio-label">Field First</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-predict" id="predictBtn">
+                <span class="btn-content">
+                    <span class="btn-icon">🔮</span>
+                    <span class="btn-text">Predict Winner</span>
+                </span>
+                <span class="btn-loading" style="display:none;">
+                    <span class="spinner"></span>
+                    <span>Analyzing...</span>
+                </span>
+            </button>
+        </form>
+    </section>
+
+    <!-- Error Alert -->
+    <div class="alert alert-error" id="errorAlert" style="display:none;">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-text" id="errorText"></span>
+        <button class="alert-close" onclick="this.parentElement.style.display='none'">×</button>
+    </div>
+
+    <!-- Results Section (hidden by default) -->
+    <section class="results-section" id="resultsSection" style="display:none;">
+
+        <!-- Winner Banner -->
+        <div class="card winner-card" id="winnerCard">
+            <div class="confetti-container" id="confetti"></div>
+            <div class="winner-trophy">🏆</div>
+            <h2 class="winner-title" id="winnerName"></h2>
+            <p class="winner-subtitle">Predicted Winner</p>
+            <div class="confidence-badge" id="confidenceBadge">
+                <span class="conf-label">Confidence:</span>
+                <span class="conf-value" id="confidenceValue"></span>
+            </div>
+        </div>
+
+        <!-- Win Probability Bars -->
+        <div class="card prob-card">
+            <h2 class="card-title">
+                <span class="card-title-icon">📊</span>
+                Win Probability
+            </h2>
+            <div class="prob-container">
+                <div class="prob-team" id="probTeam1">
+                    <div class="prob-team-name" id="probTeam1Name"></div>
+                    <div class="prob-bar-wrapper">
+                        <div class="prob-bar prob-bar-1" id="probBar1" style="width: 0%"></div>
+                    </div>
+                    <div class="prob-pct" id="probPct1"></div>
+                </div>
+                <div class="prob-team" id="probTeam2">
+                    <div class="prob-team-name" id="probTeam2Name"></div>
+                    <div class="prob-bar-wrapper">
+                        <div class="prob-bar prob-bar-2" id="probBar2" style="width: 0%"></div>
+                    </div>
+                    <div class="prob-pct" id="probPct2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoreboard & PoTM Grid -->
+        <div class="stats-grid">
+            <!-- Scoreboard -->
+            <div class="card stat-card scoreboard-card">
+                <h3 class="stat-card-title">
+                    <span class="card-title-icon">🏏</span>
+                    Predicted Score
+                </h3>
+                <div class="scoreboard-container">
+                    <div class="inning-display">
+                        <div id="sbInn1Team" class="inning-team">Team 1</div>
+                        <div id="sbInn1Score" class="inning-score">0/0</div>
+                        <div class="inning-label">1st Innings</div>
+                    </div>
+                    <div class="scoreboard-divider"></div>
+                    <div class="inning-display">
+                        <div id="sbInn2Team" class="inning-team">Team 2</div>
+                        <div id="sbInn2Score" class="inning-score">0/0</div>
+                        <div class="inning-label">2nd Innings</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player of the Match -->
+            <div class="card stat-card potm-card">
+                <div class="potm-icon">🌟</div>
+                <h3 class="potm-label">Player of the Match</h3>
+                <div id="potmName" class="potm-name">—</div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <!-- Head-to-Head -->
+            <div class="card stat-card">
+                <h3 class="stat-card-title">
+                    <span class="card-title-icon">📜</span>
+                    Head-to-Head
+                </h3>
+                <div class="h2h-display" id="h2hDisplay">
+                    <div class="h2h-team">
+                        <span class="h2h-wins" id="h2hT1Wins">—</span>
+                        <span class="h2h-team-name" id="h2hT1Name">Team 1</span>
+                    </div>
+                    <div class="h2h-divider">
+                        <span class="h2h-total" id="h2hTotal">0 matches</span>
+                    </div>
+                    <div class="h2h-team">
+                        <span class="h2h-wins" id="h2hT2Wins">—</span>
+                        <span class="h2h-team-name" id="h2hT2Name">Team 2</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Player Analysis -->
+            <div class="card stat-card player-card">
+                <h3 class="stat-card-title">
+                    <span class="card-title-icon">👤</span>
+                    Key Players
+                </h3>
+                <div id="playerAnalysis" class="player-analysis"></div>
+            </div>
+        </div>
+
+        <!-- Match Details -->
+        <div class="card details-card">
+            <h3 class="stat-card-title">
+                <span class="card-title-icon">📋</span>
+                Match Details
+            </h3>
+            <div class="details-grid" id="matchDetails"></div>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <p>Built with <span class="heart">♥</span> using Machine Learning • IPL Match Predictor 2026</p>
+    <div class="footer-link-display">
+        <span class="footer-link-label">Live Project Link:</span>
+        <code id="currentUrl">Loading...</code>
+    </div>
+</footer>
+
+<script src="/static/script.js?v=2"></script>
+<script>
+    // Squad Selection Logic
+    const team1Select = document.getElementById('team1');
+    const team2Select = document.getElementById('team2');
+    const squad1List = document.getElementById('squad1List');
+    const squad2List = document.getElementById('squad2List');
+    const squad1Count = document.getElementById('squad1Count');
+    const squad2Count = document.getElementById('squad2Count');
+
+    let selectedSquad1 = [];
+    let selectedSquad2 = [];
+
+    async function loadSquad(teamName, listElement, squadArray, countElement) {
+        if (!teamName) return;
+        listElement.innerHTML = '<div class="spinner-sm"></div>';
+        try {
+            const response = await fetch(`/get-squad/${encodeURIComponent(teamName)}`);
+            const data = await response.json();
+            
+            // Flatten all archetypes (batsmen, bowlers, allrounders)
+            const allPlayers = [
+                ...(data.players.batsmen || []),
+                ...(data.players.bowlers || []),
+                ...(data.players.allrounders || [])
+            ].sort();
+
+            listElement.innerHTML = '';
+            squadArray.length = 0;
+            countElement.textContent = `0/11`;
+
+            allPlayers.forEach(player => {
+                const label = document.createElement('label');
+                label.className = 'player-item';
+                label.innerHTML = `
+                    <input type="checkbox" value="${player}">
+                    <span class="player-name">${player}</span>
+                `;
+                
+                label.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        if (squadArray.length >= 11) {
+                            e.target.checked = false;
+                            alert("You can only select 11 players!");
+                            return;
+                        }
+                        squadArray.push(player);
+                    } else {
+                        const index = squadArray.indexOf(player);
+                        if (index > -1) squadArray.splice(index, 1);
+                    }
+                    countElement.textContent = `${squadArray.length}/11`;
+                    label.classList.toggle('selected', e.target.checked);
+                });
+                
+                listElement.appendChild(label);
+            });
+        } catch (err) {
+            listElement.innerHTML = '<p class="error">Failed to load squad.</p>';
+        }
+    }
+
+    team1Select.addEventListener('change', () => loadSquad(team1Select.value, squad1List, selectedSquad1, squad1Count));
+    team2Select.addEventListener('change', () => loadSquad(team2Select.value, squad2List, selectedSquad2, squad2Count));
+<script>
+    // Share functionality
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) {
+        // Set current URL in footer
+        const currentUrlDisplay = document.getElementById('currentUrl');
+        if (currentUrlDisplay) currentUrlDisplay.textContent = window.location.href;
+
+        shareBtn.addEventListener('click', () => {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const originalText = shareBtn.innerHTML;
+                shareBtn.innerHTML = '<span class="share-icon">✅</span><span class="share-text">Link Copied!</span>';
+                shareBtn.classList.add('copied');
+                setTimeout(() => {
+                    shareBtn.innerHTML = originalText;
+                    shareBtn.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    }
+</script>
+</body>
+</html>

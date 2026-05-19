@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL 2026 Points Table — Season Standings</title>
+    <meta name="description" content="IPL 2026 season standings, points table, NRR and form guide for all 10 teams.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css?v=2">
+</head>
+<body>
+
+<div class="bg-particles" id="bgParticles"></div>
+
+<!-- Header -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="IPL Logo" class="logo-img">
+            <span class="logo-text">IPL <span class="accent">Predictor</span></span>
+        </div>
+        <p class="tagline">AI-Powered Match Outcome Predictions</p>
+    </div>
+    <nav class="site-nav">
+        <a href="/" class="nav-link">🔮 Predictor</a>
+        <a href="/scorecard" class="nav-link">📋 Scorecards</a>
+        <a href="/points-table" class="nav-link active">🏆 Points Table</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <div class="page-hero">
+        <h1 class="page-title"><span class="card-title-icon">🏆</span> IPL 2026 Points Table</h1>
+        <p class="page-subtitle">Live standings after 8 matches played per team</p>
+    </div>
+
+    <div class="card pt-card">
+        <!-- Legend -->
+        <div class="pt-legend">
+            <span class="pt-legend-item playoff-spot">Top 4 → Playoffs</span>
+            <span class="pt-legend-item">
+                <span class="form-badge form-w">W</span> Win &nbsp;
+                <span class="form-badge form-l">L</span> Loss
+            </span>
+        </div>
+
+        <!-- Table -->
+        <div class="pt-table-wrapper">
+            <table class="pt-table" id="pointsTable">
+                <thead>
+                    <tr>
+                        <th class="pt-th-pos">#</th>
+                        <th class="pt-th-team">Team</th>
+                        <th>P</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>NR</th>
+                        <th>NRR</th>
+                        <th class="pt-th-pts">Pts</th>
+                        <th class="pt-th-form">Form (Last 5)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in points %}
+                    <tr class="pt-row {% if row.pos <= 4 %}pt-playoff{% endif %}" id="team-row-{{ row.pos }}">
+                        <td class="pt-pos">
+                            {% if row.pos == 1 %}🥇
+                            {% elif row.pos == 2 %}🥈
+                            {% elif row.pos == 3 %}🥉
+                            {% elif row.pos == 4 %}<span class="pos-4">4</span>
+                            {% else %}<span class="pos-other">{{ row.pos }}</span>{% endif %}
+                        </td>
+                        <td class="pt-team">
+                            <div class="pt-team-name">{{ row.team }}</div>
+                            <div class="pt-captain">C: {{ row.captain }}</div>
+                        </td>
+                        <td class="pt-num">{{ row.p }}</td>
+                        <td class="pt-num pt-win">{{ row.w }}</td>
+                        <td class="pt-num pt-loss">{{ row.l }}</td>
+                        <td class="pt-num">{{ row.nr }}</td>
+                        <td class="pt-nrr {% if row.nrr.startswith('+') %}pt-nrr-pos{% else %}pt-nrr-neg{% endif %}">{{ row.nrr }}</td>
+                        <td class="pt-pts">{{ row.pts }}</td>
+                        <td class="pt-form">
+                            {% for f in row.form %}
+                            <span class="form-badge form-{{ f.lower() }}">{{ f }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Playoff info banner -->
+        <div class="pt-playoff-banner">
+            <span class="pt-playoff-icon">⚡</span>
+            <span>Top 4 teams qualify for the playoffs. Top 2 get two chances.</span>
+        </div>
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <p>Built with <span class="heart">♥</span> using Machine Learning • IPL Match Predictor 2026</p>
+</footer>
+
+<script>
+    // Particles
+    const container = document.getElementById("bgParticles");
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement("div");
+        p.classList.add("particle");
+        p.style.left = Math.random() * 100 + "%";
+        p.style.animationDuration = 8 + Math.random() * 14 + "s";
+        p.style.animationDelay = Math.random() * 10 + "s";
+        p.style.width = p.style.height = (2 + Math.random() * 3) + "px";
+        p.style.opacity = 0.15 + Math.random() * 0.25;
+        container.appendChild(p);
+    }
+</script>
+</body>
+</html>

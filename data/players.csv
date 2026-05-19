@@ -1,0 +1,128 @@
+player_id,player_name,team,role,batting_avg,bowling_avg,strike_rate,economy_rate
+1,Rohit Sharma,Mumbai Indians,batsmen,32.0,,132.2,
+2,Ishan Kishan,Mumbai Indians,batsmen,33.2,,165.5,
+3,Suryakumar Yadav,Mumbai Indians,batsmen,26.1,,130.3,
+4,Tilak Varma,Mumbai Indians,batsmen,40.6,,150.3,
+5,Naman Dhir,Mumbai Indians,batsmen,24.2,,145.9,
+6,Jasprit Bumrah,Mumbai Indians,bowler,24.3,23.3,139.8,5.13
+7,Gerald Coetzee,Mumbai Indians,bowler,14.2,22.4,114.7,8.47
+8,Akash Madhwal,Mumbai Indians,bowler,20.7,13.9,164.3,7.66
+9,Nuwan Thushara,Mumbai Indians,bowler,28.5,13.8,124.1,8.17
+10,Piyush Chawla,Mumbai Indians,bowler,18.8,31.8,123.0,7.56
+11,Hardik Pandya,Mumbai Indians,allrounder,23.2,46.5,134.7,6.41
+12,namin thir,Mumbai Indians,allrounder,34.6,15.8,139.2,5.06
+13,Ruturaj Gaikwad,Chennai Super Kings,batsmen,17.4,,138.9,
+14,Rachin Ravindra,Chennai Super Kings,batsmen,33.9,,138.4,
+15,MS Dhoni,Chennai Super Kings,batsmen,27.1,,129.0,
+16,Shaik Rasheed,Chennai Super Kings,batsmen,16.2,,120.6,
+17,Anshul Kamboj,Chennai Super Kings,batsmen,24.3,,156.1,
+18,Matheesha Pathirana,Chennai Super Kings,bowler,30.7,10.4,141.5,7.42
+19,Khaleel Ahmed,Chennai Super Kings,bowler,22.6,34.1,155.6,9.4
+20,Noor Ahmad,Chennai Super Kings,bowler,21.3,24.9,141.6,9.46
+21,Gurjapneet Singh,Chennai Super Kings,bowler,24.2,26.1,112.9,6.21
+22,Ravindra Jadeja,Chennai Super Kings,allrounder,34.5,41.6,133.6,9.51
+23,Shivam Dube,Chennai Super Kings,allrounder,30.9,21.5,142.2,10.31
+24,Vijay Shankar,Chennai Super Kings,allrounder,27.7,43.6,82.6,9.23
+25,Virat Kohli,Royal Challengers Bengaluru,batsmen,28.7,,129.0,
+26,Rajat Patidar,Royal Challengers Bengaluru,batsmen,28.7,,95.2,
+27,Phil Salt,Royal Challengers Bengaluru,batsmen,26.2,,142.1,
+28,Devdutt Padikkal,Royal Challengers Bengaluru,batsmen,39.8,,124.6,
+29,Manoj Bhandage,Royal Challengers Bengaluru,batsmen,21.5,,125.0,
+30,Josh Hazlewood,Royal Challengers Bengaluru,bowler,35.3,31.3,124.4,8.77
+31,Bhuvneshwar Kumar,Royal Challengers Bengaluru,bowler,28.8,37.7,121.0,7.51
+32,Yash Dayal,Royal Challengers Bengaluru,bowler,24.9,13.4,140.9,8.39
+33,Suyash Sharma,Royal Challengers Bengaluru,bowler,28.0,25.7,106.7,7.37
+34,Swapnil Singh,Royal Challengers Bengaluru,bowler,25.3,20.0,131.8,8.61
+35,Tim David,Royal Challengers Bengaluru,allrounder,43.1,29.7,140.2,7.89
+36,Krunal Pandya,Royal Challengers Bengaluru,allrounder,12.6,27.7,136.2,11.69
+37,Ajinkya Rahane,Kolkata Knight Riders,batsmen,26.5,,141.0,
+38,Venkatesh Iyer,Kolkata Knight Riders,batsmen,27.7,,111.6,
+39,Angkrish Raghuvanshi,Kolkata Knight Riders,batsmen,37.1,,150.0,
+40,Rinku Singh,Kolkata Knight Riders,batsmen,34.3,,116.8,
+41,Manish Pandey,Kolkata Knight Riders,batsmen,39.2,,107.0,
+42,Mitchell Starc,Kolkata Knight Riders,bowler,32.7,49.9,115.2,7.15
+43,Varun Chakravarthy,Kolkata Knight Riders,bowler,28.8,23.0,104.0,8.1
+44,Harshit Rana,Kolkata Knight Riders,bowler,19.5,32.7,116.6,10.32
+45,Vaibhav Arora,Kolkata Knight Riders,bowler,21.7,24.8,151.3,6.15
+46,Anrich Nortje,Kolkata Knight Riders,bowler,29.8,41.1,102.9,8.28
+47,Andre Russell,Kolkata Knight Riders,allrounder,30.1,35.8,110.3,6.02
+48,Cameron Green,Kolkata Knight Riders,allrounder,32.2,31.0,140.0,8.52
+49,Ramandeep Singh,Kolkata Knight Riders,allrounder,22.6,30.3,140.9,6.93
+50,Yashasvi Jaiswal,Rajasthan Royals,batsmen,42.9,,144.5,
+51,Sanju Samson,Rajasthan Royals,batsmen,18.5,,148.1,
+52,Shimron Hetmyer,Rajasthan Royals,batsmen,20.2,,150.7,
+53,Rovman Powell,Rajasthan Royals,batsmen,37.3,,118.6,
+54,Kunal Rathore,Rajasthan Royals,batsmen,35.7,,143.3,
+55,Jofra Archer,Rajasthan Royals,bowler,34.6,47.0,130.1,6.87
+56,Sandeep Sharma,Rajasthan Royals,bowler,20.9,19.8,133.5,8.51
+57,Wanindu Hasaranga,Rajasthan Royals,bowler,30.2,36.3,135.3,10.18
+58,Maheesh Theekshana,Rajasthan Royals,bowler,25.9,55.2,147.5,6.71
+59,Avesh Khan,Rajasthan Royals,bowler,19.4,32.8,130.5,9.07
+60,Riyan Parag,Rajasthan Royals,allrounder,31.8,27.3,118.1,5.73
+61,Dhruv Jurel,Rajasthan Royals,allrounder,24.4,36.6,139.3,6.13
+62,Nitish Kumar Reddy,Rajasthan Royals,allrounder,29.4,31.9,117.3,8.23
+63,Jake Fraser-McGurk,Delhi Capitals,batsmen,28.5,,112.1,
+64,Faf du Plessis,Delhi Capitals,batsmen,30.9,,146.2,
+65,Harry Brook,Delhi Capitals,batsmen,36.7,,156.1,
+66,Karun Nair,Delhi Capitals,batsmen,17.0,,116.2,
+67,Tristan Stubbs,Delhi Capitals,batsmen,32.1,,145.3,
+68,Mitchell Starc,Delhi Capitals,bowler,32.1,66.5,146.4,9.7
+69,Kuldeep Yadav,Delhi Capitals,bowler,35.6,34.5,128.7,9.14
+70,Mukesh Kumar,Delhi Capitals,bowler,21.8,25.6,125.3,8.12
+71,Mohit Sharma,Delhi Capitals,bowler,46.5,9.3,148.7,5.58
+72,Dushmantha Chameera,Delhi Capitals,bowler,24.2,38.9,136.3,6.38
+73,Axar Patel,Delhi Capitals,allrounder,22.3,34.8,120.4,8.32
+74,Ashutosh Sharma,Delhi Capitals,allrounder,28.4,21.5,177.9,8.95
+75,Vipraj Nigam,Delhi Capitals,allrounder,11.8,29.9,121.8,9.28
+76,Travis Head,Sunrisers Hyderabad,batsmen,21.7,,132.7,
+77,Abhishek Sharma,Sunrisers Hyderabad,batsmen,32.0,,152.3,
+78,Heinrich Klaasen,Sunrisers Hyderabad,batsmen,18.4,,128.3,
+79,Ishan Kishan,Sunrisers Hyderabad,batsmen,24.2,,121.9,
+80,Adam Rossington,Sunrisers Hyderabad,batsmen,42.1,,143.1,
+81,Pat Cummins,Sunrisers Hyderabad,bowler,17.9,37.2,177.4,9.55
+82,T Natarajan,Sunrisers Hyderabad,bowler,15.8,23.2,160.3,6.94
+83,Harshal Patel,Sunrisers Hyderabad,bowler,31.6,35.7,116.5,7.91
+84,Simarjeet Singh,Sunrisers Hyderabad,bowler,2.1,17.8,129.9,6.13
+85,Zeeshan Ansari,Sunrisers Hyderabad,bowler,41.1,13.7,126.2,8.2
+86,Washington Sundar,Sunrisers Hyderabad,allrounder,39.5,13.6,158.3,8.02
+87,Shahbaz Ahmed,Sunrisers Hyderabad,allrounder,20.1,32.6,139.0,7.1
+88,Kamindu Mendis,Sunrisers Hyderabad,allrounder,28.6,24.1,137.3,8.99
+89,Shreyas Iyer,Punjab Kings,batsmen,40.7,,110.2,
+90,Prabhsimran Singh,Punjab Kings,batsmen,45.1,,96.0,
+91,Josh Inglis,Punjab Kings,batsmen,26.8,,146.8,
+92,Nehal Wadhera,Punjab Kings,batsmen,30.2,,122.5,
+93,Musheer Khan,Punjab Kings,batsmen,26.3,,125.1,
+94,Arshdeep Singh,Punjab Kings,bowler,23.3,36.5,142.1,6.96
+95,Marco Jansen,Punjab Kings,bowler,35.2,31.1,151.3,8.94
+96,Yuzvendra Chahal,Punjab Kings,bowler,21.4,22.4,149.9,8.92
+97,Rahul Chahar,Punjab Kings,bowler,27.8,29.2,160.6,7.11
+98,Harpreet Brar,Punjab Kings,bowler,32.4,26.0,130.6,9.65
+99,Glenn Maxwell,Punjab Kings,allrounder,34.6,36.1,161.1,8.03
+100,Marcus Stoinis,Punjab Kings,allrounder,33.5,24.9,141.5,7.8
+101,Azmatullah Omarzai,Punjab Kings,allrounder,28.8,34.0,118.6,11.14
+102,Shubman Gill,Gujarat Titans,batsmen,20.0,,110.7,
+103,Jos Buttler,Gujarat Titans,batsmen,37.3,,150.8,
+104,Sai Sudharsan,Gujarat Titans,batsmen,33.0,,147.6,
+105,David Miller,Gujarat Titans,batsmen,27.9,,117.1,
+106,Sherfane Rutherford,Gujarat Titans,batsmen,28.6,,121.5,
+107,Rashid Khan,Gujarat Titans,bowler,35.8,26.5,118.5,7.52
+108,Mohammed Siraj,Gujarat Titans,bowler,31.3,22.4,118.6,8.37
+109,Gerald Coetzee,Gujarat Titans,bowler,30.0,22.9,125.6,8.35
+110,Noor Ahmad,Gujarat Titans,bowler,16.4,13.9,120.6,7.68
+111,Ishant Sharma,Gujarat Titans,bowler,30.5,42.8,152.2,7.76
+112,Rahul Tewatia,Gujarat Titans,allrounder,27.8,18.0,134.6,7.57
+113,Dasun Shanaka,Gujarat Titans,allrounder,30.6,19.7,145.4,10.3
+114,Shahrukh Khan,Gujarat Titans,allrounder,27.1,32.0,148.8,7.4
+115,Rishabh Pant,Lucknow Super Giants,batsmen,29.8,,135.3,
+116,Nicholas Pooran,Lucknow Super Giants,batsmen,28.8,,119.5,
+117,Ayush Badoni,Lucknow Super Giants,batsmen,28.2,,145.0,
+118,Mitchell Marsh,Lucknow Super Giants,batsmen,39.6,,154.2,
+119,Aiden Markram,Lucknow Super Giants,batsmen,45.2,,119.7,
+120,Mayank Yadav,Lucknow Super Giants,bowler,35.0,29.8,178.8,6.79
+121,Ravi Bishnoi,Lucknow Super Giants,bowler,21.3,22.0,92.5,7.21
+122,Yash Thakur,Lucknow Super Giants,bowler,21.9,29.5,141.8,10.81
+123,Mohsin Khan,Lucknow Super Giants,bowler,35.6,22.2,117.0,8.74
+124,David Wiese,Lucknow Super Giants,bowler,17.4,46.3,158.6,7.3
+125,Abdul Samad,Lucknow Super Giants,allrounder,14.3,41.5,132.7,9.86
+126,Kyle Mayers,Lucknow Super Giants,allrounder,15.2,22.0,135.1,8.07
+127,Deepak Hooda,Lucknow Super Giants,allrounder,24.4,34.2,113.6,7.79

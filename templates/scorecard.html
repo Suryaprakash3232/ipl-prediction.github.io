@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL 2026 Scorecards — Match Results</title>
+    <meta name="description" content="IPL 2026 match scorecards, results, and Player of the Match awards.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css?v=2">
+</head>
+<body>
+
+<div class="bg-particles" id="bgParticles"></div>
+
+<!-- Header -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo">
+            <img src="/static/images/logo.png" alt="IPL Logo" class="logo-img">
+            <span class="logo-text">IPL <span class="accent">Predictor</span></span>
+        </div>
+        <p class="tagline">AI-Powered Match Outcome Predictions</p>
+    </div>
+    <nav class="site-nav">
+        <a href="/" class="nav-link">🔮 Predictor</a>
+        <a href="/scorecard" class="nav-link active">📋 Scorecards</a>
+        <a href="/points-table" class="nav-link">🏆 Points Table</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <div class="page-hero">
+        <h1 class="page-title"><span class="card-title-icon">📋</span> IPL 2026 Scorecards</h1>
+        <p class="page-subtitle">Match results & highlights from the 2026 season</p>
+    </div>
+
+    <div class="scorecards-list">
+        {% for match in scorecards %}
+        <div class="card sc-card" id="match-{{ match.match_no }}">
+
+            <!-- Match Header -->
+            <div class="sc-header">
+                <div class="sc-meta">
+                    <span class="sc-match-no">Match {{ match.match_no }}</span>
+                    <span class="sc-dot">•</span>
+                    <span class="sc-date">{{ match.date }}</span>
+                </div>
+                <div class="sc-venue">🏟️ {{ match.venue }}</div>
+            </div>
+
+            <!-- Innings -->
+            <div class="sc-innings-grid">
+                <!-- Innings 1 -->
+                <div class="sc-inning sc-inn1">
+                    <div class="sc-inn-team">{{ match.inn1.team }}</div>
+                    <div class="sc-inn-score">{{ match.inn1.score }}</div>
+                    <div class="sc-inn-overs">{{ match.inn1.overs }} Ov</div>
+                    <div class="sc-inn-stats">
+                        <span class="sc-stat-row">🏏 {{ match.inn1.top_bat }}</span>
+                        <span class="sc-stat-row">🎳 {{ match.inn1.top_bowl }}</span>
+                    </div>
+                </div>
+
+                <div class="sc-vs-divider">
+                    <div class="sc-vs-line"></div>
+                    <span class="sc-vs-text">VS</span>
+                    <div class="sc-vs-line"></div>
+                </div>
+
+                <!-- Innings 2 -->
+                <div class="sc-inning sc-inn2">
+                    <div class="sc-inn-team">{{ match.inn2.team }}</div>
+                    <div class="sc-inn-score">{{ match.inn2.score }}</div>
+                    <div class="sc-inn-overs">{{ match.inn2.overs }} Ov</div>
+                    <div class="sc-inn-stats">
+                        <span class="sc-stat-row">🏏 {{ match.inn2.top_bat }}</span>
+                        <span class="sc-stat-row">🎳 {{ match.inn2.top_bowl }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result & POTM -->
+            <div class="sc-footer">
+                <div class="sc-result">✅ {{ match.result }}</div>
+                <div class="sc-potm">
+                    <span class="sc-potm-label">🌟 Player of Match:</span>
+                    <span class="sc-potm-name">{{ match.potm }}</span>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+</main>
+
+<footer class="site-footer">
+    <p>Built with <span class="heart">♥</span> using Machine Learning • IPL Match Predictor 2026</p>
+</footer>
+
+<script>
+    // Particles
+    const container = document.getElementById("bgParticles");
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement("div");
+        p.classList.add("particle");
+        p.style.left = Math.random() * 100 + "%";
+        p.style.animationDuration = 8 + Math.random() * 14 + "s";
+        p.style.animationDelay = Math.random() * 10 + "s";
+        p.style.width = p.style.height = (2 + Math.random() * 3) + "px";
+        p.style.opacity = 0.15 + Math.random() * 0.25;
+        container.appendChild(p);
+    }
+</script>
+</body>
+</html>
