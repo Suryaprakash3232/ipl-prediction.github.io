@@ -160,7 +160,9 @@ class IPLPredictor:
 
     def predict(self, team1: str, team2: str, venue: str,
                 toss_winner: str, toss_decision: str,
-                include_players: bool = True) -> dict:
+                include_players: bool = True,
+                squad1: Optional[list] = None,
+                squad2: Optional[list] = None) -> dict:
         """
         Predict the outcome of an IPL match.
 
@@ -234,7 +236,7 @@ class IPLPredictor:
 
         # Player performance analysis
         if include_players:
-            analysis = self._get_player_analysis(team1, team2)
+            analysis = self._get_player_analysis(team1, team2, squad1, squad2)
             result["player_analysis"] = analysis
             
             # --- Scoreboard Prediction ---
@@ -263,9 +265,52 @@ class IPLPredictor:
             inn1_wickets = np.random.randint(4, 9)
             inn2_wickets = np.random.randint(4, 10) if predicted_winner == inn1_team else np.random.randint(2, 7)
 
+            # --- Simulated Player Performances in Scorecard ---
+            # Innings 1 Top Bat (from inn1_team)
+            t1_scorer = analysis[inn1_team]["likely_top_scorer"]
+            t1_scorer_avg = t1_scorer["recent_avg_runs"] or 30.0
+            t1_runs = int(np.random.normal(t1_scorer_avg, 12))
+            t1_runs = min(inn1_score - 15, max(12, t1_runs))
+            t1_balls = int(t1_runs / np.random.uniform(1.2, 1.7))
+            inn1_top_bat_str = f"{t1_scorer['name']} {t1_runs}({t1_balls})"
+
+            # Innings 1 Top Bowl (from inn2_team)
+            t2_bowler = analysis[inn2_team]["likely_top_wicket_taker"]
+            t2_bowler_avg = t2_bowler["recent_avg_wickets"] or 2.0
+            t2_wkts = min(inn1_wickets, max(1, int(np.random.normal(t2_bowler_avg, 0.7))))
+            t2_runs_conceded = np.random.randint(15, 42)
+            inn1_top_bowl_str = f"{t2_bowler['name']} {t2_wkts}/{t2_runs_conceded}"
+
+            # Innings 2 Top Bat (from inn2_team)
+            t2_scorer = analysis[inn2_team]["likely_top_scorer"]
+            t2_scorer_avg = t2_scorer["recent_avg_runs"] or 30.0
+            t2_runs = int(np.random.normal(t2_scorer_avg, 12))
+            t2_runs = min(inn2_score - 15, max(12, t2_runs))
+            t2_balls = int(t2_runs / np.random.uniform(1.2, 1.7))
+            inn2_top_bat_str = f"{t2_scorer['name']} {t2_runs}({t2_balls})"
+
+            # Innings 2 Top Bowl (from inn1_team)
+            t1_bowler = analysis[inn1_team]["likely_top_wicket_taker"]
+            t1_bowler_avg = t1_bowler["recent_avg_wickets"] or 2.0
+            t1_wkts = min(inn2_wickets, max(1, int(np.random.normal(t1_bowler_avg, 0.7))))
+            t1_runs_conceded = np.random.randint(15, 42)
+            inn2_top_bowl_str = f"{t1_bowler['name']} {t1_wkts}/{t1_runs_conceded}"
+
             result["scoreboard"] = {
-                "inn1": {"team": inn1_team, "runs": inn1_score, "wickets": inn1_wickets},
-                "inn2": {"team": inn2_team, "runs": inn2_score, "wickets": inn2_wickets}
+                "inn1": {
+                    "team": inn1_team,
+                    "runs": inn1_score,
+                    "wickets": inn1_wickets,
+                    "top_bat": inn1_top_bat_str,
+                    "top_bowl": inn1_top_bowl_str
+                },
+                "inn2": {
+                    "team": inn2_team,
+                    "runs": inn2_score,
+                    "wickets": inn2_wickets,
+                    "top_bat": inn2_top_bat_str,
+                    "top_bowl": inn2_top_bowl_str
+                }
             }
 
             # --- Player of the Match Prediction ---
@@ -277,13 +322,16 @@ class IPLPredictor:
 
         return result
 
-    def _get_player_analysis(self, team1: str, team2: str) -> dict:
-        """Get top performer predictions for both teams."""
+    def _get_player_analysis(self, team1: str, team2: str, squad1: Optional[list] = None, squad2: Optional[list] = None) -> dict:
+        """Get top performer predictions for both teams, filtering by selected squads if available."""
         analysis = {}
 
-        for team in [team1, team2]:
-            top_bat = get_top_batsman(self.deliveries, self.matches, team)
-            top_bowl = get_top_bowler(self.deliveries, self.matches, team)
+        s1_set = set(squad1) if squad1 else None
+        s2_set = set(squad2) if squad2 else None
+
+        for team, squad in [(team1, s1_set), (team2, s2_set)]:
+            top_bat = get_top_batsman(self.deliveries, self.matches, team, allowed_players=squad)
+            top_bowl = get_top_bowler(self.deliveries, self.matches, team, allowed_players=squad)
 
             analysis[team] = {
                 "likely_top_scorer": {

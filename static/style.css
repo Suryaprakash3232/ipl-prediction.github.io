@@ -1090,6 +1090,275 @@ body {
     color: white;
 }
 
+/* ─── Playing XI Squad Selection ─── */
+.squad-section {
+    margin: 1.75rem 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.squad-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.squad-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.squad-panel {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.squad-panel:hover {
+    border-color: var(--border-glow);
+}
+
+.squad-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    background: rgba(139, 92, 246, 0.08);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.squad-team-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.squad-count {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.squad-count-full {
+    color: #34d399 !important;
+    background: rgba(52, 211, 153, 0.12) !important;
+    border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+.squad-player-list {
+    padding: 0.5rem;
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.squad-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 2rem 1rem;
+}
+
+.squad-loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.squad-error {
+    text-align: center;
+    color: #f87171;
+    font-size: 0.85rem;
+    padding: 1.5rem;
+}
+
+.squad-role-group {
+    margin-bottom: 0.5rem;
+}
+
+.squad-role-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.4rem 0.6rem 0.2rem;
+}
+
+.squad-player-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    margin: 0.15rem 0.25rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.squad-player-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.squad-player-item.selected {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.25);
+}
+
+.squad-player-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: rgba(30, 41, 59, 0.6);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.squad-player-item input[type="checkbox"]:checked {
+    background: var(--gradient-primary);
+    border-color: #8b5cf6;
+}
+
+.squad-player-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    color: white;
+    font-weight: 700;
+}
+
+.squad-player-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.squad-player-item.selected .squad-player-name {
+    color: var(--text-primary);
+}
+
+/* Squad Section Header & AI Predict Button */
+.squad-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.btn-ai-predict {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-radius: 100px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #c084fc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.1);
+}
+
+.btn-ai-predict:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%);
+    border-color: rgba(139, 92, 246, 0.7);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.btn-ai-predict:active, .ai-predict-active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.5) 0%, rgba(99, 102, 241, 0.5) 100%);
+}
+
+.squad-player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex-grow: 1;
+}
+
+.squad-player-stats {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.squad-player-item.selected .squad-player-stats {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.squad-rec-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #e9d5ff;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(236, 72, 153, 0.4) 100%);
+    padding: 0.15rem 0.45rem;
+    border-radius: 100px;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    white-space: nowrap;
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.squad-player-item-recommended {
+    position: relative;
+    border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 4px rgba(168, 85, 247, 0.1);
+        border-color: rgba(168, 85, 247, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+        border-color: rgba(168, 85, 247, 0.6);
+    }
+}
+
+@media (max-width: 768px) {
+    .squad-grid {
+        grid-template-columns: 1fr;
+    }
+    .squad-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .btn-ai-predict {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 /* ─── Navigation Bar ─── */
 .site-nav {
     display: flex;

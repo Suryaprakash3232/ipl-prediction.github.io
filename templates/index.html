@@ -101,6 +101,44 @@
                 </div>
             </div>
 
+            <!-- Playing XI Selection -->
+            <div class="squad-section" id="squadSection" style="display:none;">
+                <div class="squad-section-header">
+                    <div>
+                        <h2 class="squad-section-title">
+                            <span class="card-title-icon">👥</span>
+                            Select Playing XI
+                        </h2>
+                        <p class="card-subtitle" style="margin-bottom: 0;">Configure Playing XI or let AI predict it</p>
+                    </div>
+                    <button type="button" class="btn-ai-predict" id="aiPredictSquadBtn" title="Auto-select recommended playing 11 based on player stats">
+                        <span>🔮 AI Predict Playing XIs</span>
+                    </button>
+                </div>
+                <div class="squad-grid">
+                    <!-- Team 1 Squad -->
+                    <div class="squad-panel" id="squad1Panel">
+                        <div class="squad-panel-header">
+                            <span class="squad-team-name" id="squad1TeamName">Team 1</span>
+                            <span class="squad-count" id="squad1Count">0/11</span>
+                        </div>
+                        <div class="squad-player-list" id="squad1List">
+                            <p class="squad-placeholder">Select Team 1 to load squad</p>
+                        </div>
+                    </div>
+                    <!-- Team 2 Squad -->
+                    <div class="squad-panel" id="squad2Panel">
+                        <div class="squad-panel-header">
+                            <span class="squad-team-name" id="squad2TeamName">Team 2</span>
+                            <span class="squad-count" id="squad2Count">0/11</span>
+                        </div>
+                        <div class="squad-player-list" id="squad2List">
+                            <p class="squad-placeholder">Select Team 2 to load squad</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Toss Row -->
             <div class="form-row">
                 <div class="form-group" id="tossWinnerGroup">
@@ -212,12 +250,20 @@
                         <div id="sbInn1Team" class="inning-team">Team 1</div>
                         <div id="sbInn1Score" class="inning-score">0/0</div>
                         <div class="inning-label">1st Innings</div>
+                        <div class="inning-performers" style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.75rem; text-align: center; color: var(--text-muted); line-height: 1.3;">
+                            <span id="sbInn1TopBat"></span>
+                            <span id="sbInn1TopBowl"></span>
+                        </div>
                     </div>
                     <div class="scoreboard-divider"></div>
                     <div class="inning-display">
                         <div id="sbInn2Team" class="inning-team">Team 2</div>
                         <div id="sbInn2Score" class="inning-score">0/0</div>
                         <div class="inning-label">2nd Innings</div>
+                        <div class="inning-performers" style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.75rem; text-align: center; color: var(--text-muted); line-height: 1.3;">
+                            <span id="sbInn2TopBat"></span>
+                            <span id="sbInn2TopBowl"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -287,89 +333,159 @@
 
 <script src="/static/script.js?v=2"></script>
 <script>
-    // Squad Selection Logic
-    const team1Select = document.getElementById('team1');
-    const team2Select = document.getElementById('team2');
-    const squad1List = document.getElementById('squad1List');
-    const squad2List = document.getElementById('squad2List');
-    const squad1Count = document.getElementById('squad1Count');
-    const squad2Count = document.getElementById('squad2Count');
-
+(function() {
+    // ── Squad Selection Logic ──
+    const team1Sel = document.getElementById('team1');
+    const team2Sel = document.getElementById('team2');
+    const squadSection = document.getElementById('squadSection');
     let selectedSquad1 = [];
     let selectedSquad2 = [];
 
-    async function loadSquad(teamName, listElement, squadArray, countElement) {
-        if (!teamName) return;
-        listElement.innerHTML = '<div class="spinner-sm"></div>';
-        try {
-            const response = await fetch(`/get-squad/${encodeURIComponent(teamName)}`);
-            const data = await response.json();
-            
-            // Flatten all archetypes (batsmen, bowlers, allrounders)
-            const allPlayers = [
-                ...(data.players.batsmen || []),
-                ...(data.players.bowlers || []),
-                ...(data.players.allrounders || [])
-            ].sort();
+    // Expose for prediction handler
+    window.getSelectedSquads = () => ({ squad1: selectedSquad1, squad2: selectedSquad2 });
 
-            listElement.innerHTML = '';
-            squadArray.length = 0;
-            countElement.textContent = `0/11`;
-
-            allPlayers.forEach(player => {
-                const label = document.createElement('label');
-                label.className = 'player-item';
-                label.innerHTML = `
-                    <input type="checkbox" value="${player}">
-                    <span class="player-name">${player}</span>
-                `;
-                
-                label.querySelector('input').addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        if (squadArray.length >= 11) {
-                            e.target.checked = false;
-                            alert("You can only select 11 players!");
-                            return;
-                        }
-                        squadArray.push(player);
-                    } else {
-                        const index = squadArray.indexOf(player);
-                        if (index > -1) squadArray.splice(index, 1);
-                    }
-                    countElement.textContent = `${squadArray.length}/11`;
-                    label.classList.toggle('selected', e.target.checked);
-                });
-                
-                listElement.appendChild(label);
-            });
-        } catch (err) {
-            listElement.innerHTML = '<p class="error">Failed to load squad.</p>';
+    function showSquadSection() {
+        if (team1Sel.value || team2Sel.value) {
+            squadSection.style.display = 'block';
         }
     }
 
-    team1Select.addEventListener('change', () => loadSquad(team1Select.value, squad1List, selectedSquad1, squad1Count));
-    team2Select.addEventListener('change', () => loadSquad(team2Select.value, squad2List, selectedSquad2, squad2Count));
-<script>
-    // Share functionality
+    function renderRoleGroup(roleName, players, emoji) {
+        let html = `<div class="squad-role-group">`;
+        html += `<div class="squad-role-label">${emoji} ${roleName}</div>`;
+        players.forEach(p => {
+            let statStr = '';
+            if (p.batting_avg > 0 || p.strike_rate > 0) {
+                statStr = `Avg: ${p.batting_avg.toFixed(1)} | SR: ${p.strike_rate.toFixed(1)}`;
+            } else if (p.economy_rate && p.economy_rate < 99) {
+                statStr = `Econ: ${p.economy_rate.toFixed(2)}`;
+            }
+            
+            const recBadge = p.recommended ? `<span class="squad-rec-badge">⭐ AI Pick</span>` : '';
+            const recClass = p.recommended ? 'squad-player-item-recommended' : '';
+
+            html += `
+                <label class="squad-player-item ${recClass}" data-recommended="${p.recommended}">
+                    <input type="checkbox" value="${p.name}" ${p.recommended ? 'checked' : ''}>
+                    <div class="squad-player-info">
+                        <span class="squad-player-name">${p.name}</span>
+                        ${statStr ? `<span class="squad-player-stats">${statStr}</span>` : ''}
+                    </div>
+                    ${recBadge}
+                </label>
+            `;
+        });
+        html += `</div>`;
+        return html;
+    }
+
+    async function loadSquad(teamName, panelId, squadArray) {
+        const list = document.getElementById(panelId + 'List');
+        const count = document.getElementById(panelId + 'Count');
+        const nameEl = document.getElementById(panelId + 'TeamName');
+        if (!teamName) return;
+        nameEl.textContent = teamName;
+        list.innerHTML = '<div class="squad-loading"><span class="spinner"></span></div>';
+        squadArray.length = 0;
+        count.textContent = '0/11';
+        try {
+            const res = await fetch(`/get-squad/${encodeURIComponent(teamName)}`);
+            const data = await res.json();
+            const p = data.players;
+            let html = '';
+            if (p.batsmen && p.batsmen.length) html += renderRoleGroup('Batsmen', p.batsmen, '🏏');
+            if (p.allrounders && p.allrounders.length) html += renderRoleGroup('All-Rounders', p.allrounders, '⚡');
+            if (p.bowlers && p.bowlers.length) html += renderRoleGroup('Bowlers', p.bowlers, '🎳');
+            list.innerHTML = html;
+
+            // Pre-populate with AI-recommended players
+            list.querySelectorAll('input[type=checkbox]').forEach(cb => {
+                const label = cb.closest('.squad-player-item');
+                const name = cb.value;
+                const isRecommended = label.getAttribute('data-recommended') === 'true';
+
+                if (isRecommended) {
+                    squadArray.push(name);
+                    label.classList.add('selected');
+                }
+
+                cb.addEventListener('change', () => {
+                    if (cb.checked) {
+                        if (squadArray.length >= 11) { cb.checked = false; return; }
+                        squadArray.push(name);
+                    } else {
+                        const i = squadArray.indexOf(name);
+                        if (i > -1) squadArray.splice(i, 1);
+                    }
+                    count.textContent = `${squadArray.length}/11`;
+                    count.classList.toggle('squad-count-full', squadArray.length === 11);
+                    label.classList.toggle('selected', cb.checked);
+                });
+            });
+            count.textContent = `${squadArray.length}/11`;
+            count.classList.toggle('squad-count-full', squadArray.length === 11);
+        } catch (e) {
+            list.innerHTML = '<p class="squad-error">Failed to load squad.</p>';
+        }
+    }
+
+    team1Sel.addEventListener('change', () => { showSquadSection(); loadSquad(team1Sel.value, 'squad1', selectedSquad1); });
+    team2Sel.addEventListener('change', () => { showSquadSection(); loadSquad(team2Sel.value, 'squad2', selectedSquad2); });
+
+    // ── AI Predict Button ──
+    const aiPredictBtn = document.getElementById('aiPredictSquadBtn');
+    if (aiPredictBtn) {
+        aiPredictBtn.addEventListener('click', () => {
+            const list1 = document.getElementById('squad1List');
+            if (list1) {
+                selectedSquad1.length = 0;
+                list1.querySelectorAll('.squad-player-item').forEach(label => {
+                    const cb = label.querySelector('input[type=checkbox]');
+                    const isRec = label.getAttribute('data-recommended') === 'true';
+                    cb.checked = isRec;
+                    label.classList.toggle('selected', isRec);
+                    if (isRec) selectedSquad1.push(cb.value);
+                });
+                const count1 = document.getElementById('squad1Count');
+                count1.textContent = `${selectedSquad1.length}/11`;
+                count1.classList.toggle('squad-count-full', selectedSquad1.length === 11);
+            }
+
+            const list2 = document.getElementById('squad2List');
+            if (list2) {
+                selectedSquad2.length = 0;
+                list2.querySelectorAll('.squad-player-item').forEach(label => {
+                    const cb = label.querySelector('input[type=checkbox]');
+                    const isRec = label.getAttribute('data-recommended') === 'true';
+                    cb.checked = isRec;
+                    label.classList.toggle('selected', isRec);
+                    if (isRec) selectedSquad2.push(cb.value);
+                });
+                const count2 = document.getElementById('squad2Count');
+                count2.textContent = `${selectedSquad2.length}/11`;
+                count2.classList.toggle('squad-count-full', selectedSquad2.length === 11);
+            }
+
+            aiPredictBtn.classList.add('ai-predict-active');
+            setTimeout(() => aiPredictBtn.classList.remove('ai-predict-active'), 500);
+        });
+    }
+
+    // ── Share Functionality ──
     const shareBtn = document.getElementById('shareBtn');
     if (shareBtn) {
-        // Set current URL in footer
         const currentUrlDisplay = document.getElementById('currentUrl');
         if (currentUrlDisplay) currentUrlDisplay.textContent = window.location.href;
-
         shareBtn.addEventListener('click', () => {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                const originalText = shareBtn.innerHTML;
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const orig = shareBtn.innerHTML;
                 shareBtn.innerHTML = '<span class="share-icon">✅</span><span class="share-text">Link Copied!</span>';
                 shareBtn.classList.add('copied');
-                setTimeout(() => {
-                    shareBtn.innerHTML = originalText;
-                    shareBtn.classList.remove('copied');
-                }, 2000);
+                setTimeout(() => { shareBtn.innerHTML = orig; shareBtn.classList.remove('copied'); }, 2000);
             });
         });
     }
+})();
 </script>
 </body>
 </html>

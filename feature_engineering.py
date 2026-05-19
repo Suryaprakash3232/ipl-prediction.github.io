@@ -236,7 +236,8 @@ def compute_team_bowling_stats(deliveries: pd.DataFrame, matches: pd.DataFrame,
 
 def get_top_batsman(deliveries: pd.DataFrame, matches: pd.DataFrame,
                      team: str, n_recent: int = 10,
-                     before_date: Optional[pd.Timestamp] = None) -> dict:
+                     before_date: Optional[pd.Timestamp] = None,
+                     allowed_players: Optional[set] = None) -> dict:
     """Find the likely top scorer for a team based on recent form."""
     recent_match_ids = matches[
         ((matches["team1"] == team) | (matches["team2"] == team))
@@ -251,8 +252,13 @@ def get_top_batsman(deliveries: pd.DataFrame, matches: pd.DataFrame,
         (deliveries["batting_team"] == team)
     ]
 
+    if allowed_players is not None:
+        batting = batting[batting["batsman"].isin(allowed_players)]
+
     if len(batting) == 0:
-        return {"name": "Unknown", "avg_runs": 0, "matches": 0}
+        # Fallback if no recent batting data for allowed players
+        name = list(allowed_players)[0] if allowed_players else "Unknown"
+        return {"name": name, "avg_runs": 0, "matches": 0}
 
     player_stats = batting.groupby("batsman").agg(
         total_runs=("batsman_runs", "sum"),
@@ -270,7 +276,8 @@ def get_top_batsman(deliveries: pd.DataFrame, matches: pd.DataFrame,
 
 def get_top_bowler(deliveries: pd.DataFrame, matches: pd.DataFrame,
                     team: str, n_recent: int = 10,
-                    before_date: Optional[pd.Timestamp] = None) -> dict:
+                    before_date: Optional[pd.Timestamp] = None,
+                    allowed_players: Optional[set] = None) -> dict:
     """Find the likely leading wicket-taker for a team based on recent form."""
     recent_match_ids = matches[
         ((matches["team1"] == team) | (matches["team2"] == team))
@@ -285,8 +292,13 @@ def get_top_bowler(deliveries: pd.DataFrame, matches: pd.DataFrame,
         (deliveries["bowling_team"] == team)
     ]
 
+    if allowed_players is not None:
+        bowling = bowling[bowling["bowler"].isin(allowed_players)]
+
     if len(bowling) == 0:
-        return {"name": "Unknown", "avg_wickets": 0, "matches": 0}
+        # Fallback if no recent bowling data for allowed players
+        name = list(allowed_players)[0] if allowed_players else "Unknown"
+        return {"name": name, "avg_wickets": 0, "matches": 0}
 
     player_stats = bowling.groupby("bowler").agg(
         total_wickets=("is_wicket", "sum"),

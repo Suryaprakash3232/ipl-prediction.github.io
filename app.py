@@ -22,16 +22,70 @@ from flask import Flask, render_template, request, jsonify
 from config import CURRENT_TEAMS, VENUES, PLAYERS_CSV
 import pandas as pd
 
-# Load players and build PLAYER_ARCHETYPES
+# Load players and build PLAYER_ARCHETYPES (grouped by role with AI-predicted XI)
 PLAYER_ARCHETYPES = {}
 try:
     if os.path.exists(PLAYERS_CSV):
         players_df = pd.read_csv(PLAYERS_CSV)
+        # Parse numeric stats properly
+        players_df['batting_avg'] = pd.to_numeric(players_df['batting_avg'], errors='coerce').fillna(0.0)
+        players_df['bowling_avg'] = pd.to_numeric(players_df['bowling_avg'], errors='coerce').fillna(999.0)
+        players_df['strike_rate'] = pd.to_numeric(players_df['strike_rate'], errors='coerce').fillna(0.0)
+        players_df['economy_rate'] = pd.to_numeric(players_df['economy_rate'], errors='coerce').fillna(99.0)
+
+        # Calculate a recommendation score for each player
+        def calculate_score(row):
+            role = str(row['role']).lower()
+            b_avg = row['batting_avg']
+            sr = row['strike_rate']
+            bowl_avg = row['bowling_avg']
+            econ = row['economy_rate']
+
+            if 'bat' in role:
+                return b_avg * 1.5 + (sr / 10.0)
+            elif 'bowl' in role:
+                b_score = (100.0 / bowl_avg) if bowl_avg > 0 else 0.0
+                e_score = (20.0 / econ) if econ > 0 else 0.0
+                return b_score * 2.0 + e_score * 1.5
+            else: # allrounder
+                bat_part = b_avg * 0.8 + (sr / 20.0)
+                bowl_part = (50.0 / bowl_avg) if bowl_avg > 0 else 0.0
+                econ_part = (10.0 / econ) if econ > 0 else 0.0
+                return bat_part + bowl_part + econ_part
+
+        players_df['rec_score'] = players_df.apply(calculate_score, axis=1)
+
+        # Select top 11 players for each team to mark as recommended Playing XI
+        recommended_players = set()
+        for team in players_df['team'].unique():
+            team_players = players_df[players_df['team'] == team]
+            top_11 = team_players.nlargest(11, 'rec_score')
+            recommended_players.update(top_11['player_name'].tolist())
+
         for _, row in players_df.iterrows():
             team = row['team']
+            role = row.get('role', 'batsmen')
+            player_name = row['player_name']
+            is_rec = player_name in recommended_players
+
+            player_data = {
+                "name": player_name,
+                "batting_avg": float(row['batting_avg']),
+                "strike_rate": float(row['strike_rate']),
+                "bowling_avg": float(row['bowling_avg']) if row['bowling_avg'] != 999.0 else None,
+                "economy_rate": float(row['economy_rate']) if row['economy_rate'] != 99.0 else None,
+                "recommended": is_rec
+            }
+
             if team not in PLAYER_ARCHETYPES:
-                PLAYER_ARCHETYPES[team] = []
-            PLAYER_ARCHETYPES[team].append(row['player_name'])
+                PLAYER_ARCHETYPES[team] = {'batsmen': [], 'bowlers': [], 'allrounders': []}
+            
+            if 'bat' in role.lower():
+                PLAYER_ARCHETYPES[team]['batsmen'].append(player_data)
+            elif 'bowl' in role.lower():
+                PLAYER_ARCHETYPES[team]['bowlers'].append(player_data)
+            else:
+                PLAYER_ARCHETYPES[team]['allrounders'].append(player_data)
 except Exception as e:
     print(f"Warning: Could not load players data: {e}")
 
@@ -72,8 +126,8 @@ def index():
 
 @app.route("/get-squad/<team>")
 def get_squad(team):
-    """Return the roster for a specific team."""
-    squad = PLAYER_ARCHETYPES.get(team, [])
+    """Return the roster for a specific team, grouped by role."""
+    squad = PLAYER_ARCHETYPES.get(team, {'batsmen': [], 'bowlers': [], 'allrounders': []})
     return jsonify({"players": squad})
 
 
@@ -89,8 +143,8 @@ def predict():
         toss_winner = data.get("toss_winner", "").strip()
         toss_decision = data.get("toss_decision", "").strip()
 
-        if not all([team1, team2, venue, toss_winner, toss_decision]):
-            return jsonify({"error": "All fields are required."}), 400
+        squad1 = data.get("squad1", [])
+        squad2 = data.get("squad2", [])
 
         predictor = get_predictor()
         result = predictor.predict(
@@ -100,6 +154,8 @@ def predict():
             toss_winner=toss_winner,
             toss_decision=toss_decision,
             include_players=True,
+            squad1=squad1,
+            squad2=squad2,
         )
 
         return jsonify(result)

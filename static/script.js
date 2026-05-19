@@ -98,6 +98,24 @@ async function handlePredict() {
         return;
     }
 
+    // Retrieve and validate Playing XI selections
+    let squad1 = [];
+    let squad2 = [];
+    if (window.getSelectedSquads) {
+        const squads = window.getSelectedSquads();
+        squad1 = squads.squad1 || [];
+        squad2 = squads.squad2 || [];
+    }
+
+    if (squad1.length !== 11) {
+        showError(`Please select exactly 11 players for ${team1 || 'Team 1'} (currently ${squad1.length} selected).`);
+        return;
+    }
+    if (squad2.length !== 11) {
+        showError(`Please select exactly 11 players for ${team2 || 'Team 2'} (currently ${squad2.length} selected).`);
+        return;
+    }
+
     // Show loading
     btnContent.style.display = "none";
     btnLoading.style.display = "flex";
@@ -115,6 +133,8 @@ async function handlePredict() {
                 venue,
                 toss_winner: tossWinner,
                 toss_decision: tossDecision.value,
+                squad1,
+                squad2
             }),
         });
 
@@ -185,6 +205,12 @@ function displayResults(data) {
         document.getElementById("sbInn1Score").textContent = data.scoreboard.inn1.runs + "/" + data.scoreboard.inn1.wickets;
         document.getElementById("sbInn2Team").textContent = data.scoreboard.inn2.team;
         document.getElementById("sbInn2Score").textContent = data.scoreboard.inn2.runs + "/" + data.scoreboard.inn2.wickets;
+
+        // Dynamic Player Scores under predicted scorecard
+        document.getElementById("sbInn1TopBat").textContent = "🏏 " + (data.scoreboard.inn1.top_bat || "");
+        document.getElementById("sbInn1TopBowl").textContent = "🎳 " + (data.scoreboard.inn1.top_bowl || "");
+        document.getElementById("sbInn2TopBat").textContent = "🏏 " + (data.scoreboard.inn2.top_bat || "");
+        document.getElementById("sbInn2TopBowl").textContent = "🎳 " + (data.scoreboard.inn2.top_bowl || "");
     }
 
     // Player of the Match
