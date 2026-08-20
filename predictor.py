@@ -254,13 +254,7 @@ class IPLPredictor:
                 inn1_score = int(t2_bat["avg_score"])
                 inn2_score = int(t1_bat["avg_score"])
 
-            # Force scores to align with predicted winner
-            if predicted_winner == inn1_team and inn1_score <= inn2_score:
-                inn1_score = inn2_score + np.random.randint(5, 20)
-            elif predicted_winner == inn2_team and inn2_score <= inn1_score:
-                inn2_score = inn1_score + 1
-            elif predicted_winner == inn1_team and inn2_score >= inn1_score:
-                inn1_score = inn2_score + np.random.randint(5, 20)
+
 
             inn1_wickets = np.random.randint(4, 9)
             inn2_wickets = np.random.randint(4, 10) if predicted_winner == inn1_team else np.random.randint(2, 7)
